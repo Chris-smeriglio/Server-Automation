@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 # Path to your email script
-EMAIL_SCRIPT = "/path/to/sendmail.py"
+EMAIL_SCRIPT = "/path/to/email_sender.py"
 
 # Email recipient for alerts
 ALERT_RECIPIENT = "you@example.com"
@@ -15,6 +15,7 @@ ALERT_RECIPIENT = "you@example.com"
 PLEX_API_URL = "https://plex.tv/api/downloads/5.json"
 
 def get_installed_version():
+    """Get the installed Plex version"""
     try:
         output = subprocess.check_output(
             ["plexmediaserver", "--version"],
@@ -27,6 +28,7 @@ def get_installed_version():
         return None
 
 def get_latest_version():
+    """Fetch the latest Plex version from the API."""
     try:
         data = requests.get(PLEX_API_URL, timeout=5).json()
         return data["computer"]["Linux"]["version"]
@@ -34,6 +36,7 @@ def get_latest_version():
         return None
 
 def is_service_running():
+    """Check if PlexMediaServer.service is active."""
     try:
         subprocess.check_call(
             ["systemctl", "is-active", "--quiet", "PlexMediaServer.service"]
@@ -43,6 +46,7 @@ def is_service_running():
         return False
 
 def send_alert(subject, body):
+    """Send an email alert using the external email script."""
     subprocess.call([
         "python3",
         EMAIL_SCRIPT,
